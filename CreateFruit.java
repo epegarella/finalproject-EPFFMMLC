@@ -12,7 +12,30 @@ import javax.swing.event.*;
  */
 public class CreateFruit
 {
-    //This is where we handle the fruit randomness and generate things i think
+    public CreateFruit(boolean isEaten, Point location)
+    {
+        Random r = new Random();
+
+        int rand = r.nextInt(15);
+
+        if(rand <= 7)
+        {
+            new Banana(isEaten, location);
+        }
+        else if(rand <= 10)
+        {
+            new Cherry(isEaten, location);
+        }
+        else if(rand <= 13)
+        {
+            new Orange(isEaten, location);
+        }
+        else
+        {
+            new Blueberry(isEaten, location);
+        }
+
+    }
 }
 
 abstract class Fruit
@@ -21,7 +44,9 @@ abstract class Fruit
     protected int points;
     protected Point location;
     protected int growthFactor;
-    
+    protected Color colFood;
+    protected static final int SIZE = 20;
+
     /**
      * Constructor for objects of class Fruit
      */
@@ -30,25 +55,33 @@ abstract class Fruit
         this.isEaten = isEaten;
         this.location = location;
     }
-    
+
     public boolean isEaten()
     {
         return isEaten;
     }
-    
+
     public int getPoints()
     {
         return points;
     }
-    
+
     public Point getLocation()
     {
         return location;
     }
-    
+
     public int growthFactor()
     {
         return growthFactor;
+    }
+    
+    //@Override
+    //What do we need to implement/extend so that the override works correctly?
+    public void paint(Graphics g)
+    {
+        g.setColor(colFood);
+        g.fillRect(location.x, location.y, SIZE, SIZE);
     }
 }
 
@@ -60,7 +93,9 @@ class Banana extends Fruit
         super(isEaten, location);
         points = 10;
         growthFactor = 2;
+        colFood = Color.YELLOW;
     }
+    
 }
 
 class Cherry extends Fruit
@@ -70,9 +105,11 @@ class Cherry extends Fruit
         super(isEaten, location);
         points = 20;
         growthFactor = 3;
+        colFood = Color.RED;
     }
-    
+
 }
+
 class Orange extends Fruit
 {
     public Orange(boolean isEaten, Point location)
@@ -80,9 +117,11 @@ class Orange extends Fruit
         super(isEaten, location);
         points = 30;
         growthFactor = 4;
+        colFood = Color.ORANGE;
     }
-    
+
 }
+
 class Blueberry extends Fruit
 {
     public Blueberry(boolean isEaten, Point location)
@@ -90,5 +129,6 @@ class Blueberry extends Fruit
         super(isEaten, location);
         points = 50;
         growthFactor = 5;
+        colFood = Color.CYAN;
     }
 }
