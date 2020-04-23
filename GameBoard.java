@@ -4,7 +4,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 /**
- * Write a description of class GameBoard here.
+ * The GameBoard class will create the game board and start the game. 
  *
  * @author Francesca Fealey, Elizabeth Pegarella, Lauren Carleton, Meghan Micheli
  * @version Spring 2020
@@ -24,22 +24,20 @@ public class GameBoard extends KeyAdapter implements Runnable
     private JPanel infoArea;
     private JPanel panel;
     private JPanel gamePlayPanel;
-
     private boolean running;
     private int score;
-
     private JButton startButton;
-
     private JLabel totalScore;
     private JLabel instructions;
     private JLabel key;
-
     private Random rand;
-
     private Point snakeHead;
-
     private Snake mrSnake;
 
+    /**
+     * Creates the game board for the snake game and adds information
+     * about how to play the game and what each fruit is worth.
+     */
     public void run()
     {
 
@@ -77,7 +75,6 @@ public class GameBoard extends KeyAdapter implements Runnable
         key.setFont(new Font("Serif", Font.PLAIN, 18));
         totalScore.setFont(new Font("Serif", Font.PLAIN, 18));
 
-        
 
         infoArea.add(instructions);
         infoArea.add(key);
@@ -88,17 +85,22 @@ public class GameBoard extends KeyAdapter implements Runnable
         frame.add(panel);
 
         frame.addKeyListener(this);
-        
+
         //This eventually going to be with the start button
-        
-        gamePlay();
+
+        //gamePlay();
 
         frame.pack();
         frame.setVisible(true);
-    }
 
+    }
+    
+    /**
+     * Starts the game and ends the game if the snake hits the wall.
+     */
     public void gamePlay()
     {
+        // maybe see if we want to kill the snake if he hits himself too
         mrSnake.start();
         if(snakeHead.x < 0  || snakeHead.x > FRAME_SIZEX - SNAKE_SIZE )
         {
@@ -108,21 +110,19 @@ public class GameBoard extends KeyAdapter implements Runnable
         {
             mrSnake.death();
         }
-        while (!mrSnake.isDead())
-        {
-            try{
-                Thread.sleep(SLEEP_TIME);
-            }
-            catch (InterruptedException e)
-            {
-            }
-            gamePlayPanel.repaint();
-        }
+
     }
 
+    /**
+     * If a key is pressed this will determine what should be done with the snake.
+     * If WASD is pressed then the snake will move in a certain direction.
+     * 
+     * @param e The KeyEvent object 
+     */
     @Override
     public void keyPressed(KeyEvent e)
     {
+        mrSnake.start();
         if(e.getKeyChar() == 'w')
         {
             mrSnake.move(1);
@@ -139,8 +139,12 @@ public class GameBoard extends KeyAdapter implements Runnable
         {
             mrSnake.move(4);
         }
-
+        gamePlayPanel.repaint();
     }
+
+    /**
+     * Updates the score.
+     */
     public void scoring()
     {
 
@@ -151,6 +155,7 @@ public class GameBoard extends KeyAdapter implements Runnable
     //randomly generate fruit location
     //Snake movement where do we put that?
 
+    // main method
     public static void main(String[] args)
     {
         javax.swing.SwingUtilities.invokeLater(new GameBoard());
