@@ -9,7 +9,7 @@ import javax.swing.event.*;
  * @author Francesca Fealey, Elizabeth Pegarella, Lauren Carleton, Meghan Micheli
  * @version Spring 2020
  */
-public class GameBoard extends KeyAdapter implements Runnable
+public class GameBoard extends KeyAdapter implements Runnable, ActionListener
 {
     //Constants
     private static final int FRAME_SIZEX = 1000;
@@ -31,7 +31,10 @@ public class GameBoard extends KeyAdapter implements Runnable
     private JLabel instructions;
     private JLabel key;
     private Random rand;
-    private Point snakeHead;
+    private CreateFruit fruit;
+    private Point fruitLocation;
+    //Either need to update the head or not have it as an instance variable
+    //private Point snakeHead;
     private Snake mrSnake;
 
     /**
@@ -48,7 +51,7 @@ public class GameBoard extends KeyAdapter implements Runnable
 
         rand = new Random();
 
-        snakeHead = new Point(rand.nextInt(FRAME_SIZEX - SNAKE_SIZE), rand.nextInt(FRAME_SIZEY - INFO_SIZEY - SNAKE_SIZE));
+        Point snakeHead = new Point(rand.nextInt(FRAME_SIZEX - SNAKE_SIZE), rand.nextInt(FRAME_SIZEY - INFO_SIZEY - SNAKE_SIZE));
         mrSnake = new Snake(snakeHead); 
 
         panel = new JPanel(new BorderLayout());
@@ -58,7 +61,14 @@ public class GameBoard extends KeyAdapter implements Runnable
             {
                 setBackground(Color.BLACK);
                 mrSnake.paint(g);
-                System.out.print(snakeHead);
+                
+                //Struggling with fruit class hierarchy to get fruit methods in CreateFruit or something
+                // if(!fruit.isEaten() && fruitLocation != null)
+                // {
+                    // fruit = new CreateFruit(false, fruitLocation, g);
+                    
+                // }
+
             }
         };
         infoArea = new JPanel();
@@ -75,10 +85,15 @@ public class GameBoard extends KeyAdapter implements Runnable
         key.setFont(new Font("Serif", Font.PLAIN, 18));
         totalScore.setFont(new Font("Serif", Font.PLAIN, 18));
 
+        startButton = new JButton();
+        startButton.setText("Start");
 
         infoArea.add(instructions);
         infoArea.add(key);
         infoArea.add(totalScore);
+        infoArea.add(startButton);
+        startButton.addActionListener(this);
+
 
         panel.add(gamePlayPanel);
         panel.add(infoArea, BorderLayout.NORTH);
@@ -87,28 +102,38 @@ public class GameBoard extends KeyAdapter implements Runnable
         frame.addKeyListener(this);
 
         //This eventually going to be with the start button
-
         //gamePlay();
 
         frame.pack();
         frame.setVisible(true);
 
     }
-    
+
     /**
      * Starts the game and ends the game if the snake hits the wall.
      */
     public void gamePlay()
     {
         // maybe see if we want to kill the snake if he hits himself too
-        mrSnake.start();
-        if(snakeHead.x < 0  || snakeHead.x > FRAME_SIZEX - SNAKE_SIZE )
+
+        // if(snakeHead.x < 0  || snakeHead.x > FRAME_SIZEX - SNAKE_SIZE )
+        // {
+        // mrSnake.death();
+        // }
+        // if(snakeHead.y < 0 || snakeHead.y > FRAME_SIZEX + SNAKE_SIZE)
+        // {
+        // mrSnake.death();
+        // }
+        while(!mrSnake.isDead())
         {
-            mrSnake.death();
-        }
-        if(snakeHead.y < 0 || snakeHead.y > FRAME_SIZEX + SNAKE_SIZE)
-        {
-            mrSnake.death();
+            try{
+                Thread.sleep(SLEEP_TIME);
+            }
+            catch (InterruptedException e)
+            {
+            }
+
+            gamePlayPanel.repaint();
         }
 
     }
@@ -122,7 +147,7 @@ public class GameBoard extends KeyAdapter implements Runnable
     @Override
     public void keyPressed(KeyEvent e)
     {
-        mrSnake.start();
+
         if(e.getKeyChar() == 'w')
         {
             mrSnake.move(1);
@@ -139,7 +164,23 @@ public class GameBoard extends KeyAdapter implements Runnable
         {
             mrSnake.move(4);
         }
-        gamePlayPanel.repaint();
+        gamePlay();
+        //gamePlayPanel.repaint();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        if(startButton == e.getSource())
+        {
+            mrSnake.death(false);
+            mrSnake.start();
+
+            //Cant be where a snake is maybe set it to isEaten if its where the snake is
+            fruitLocation = new Point(rand.nextInt(FRAME_SIZEX - Fruit.SIZE), rand.nextInt(FRAME_SIZEY - INFO_SIZEY - Fruit.SIZE));
+
+            gamePlayPanel.repaint();
+        }
     }
 
     /**

@@ -40,7 +40,7 @@ public class Snake extends Thread
         snake.add(location);
 
         snakeHead = snake.get(0);
-        isDead = false;
+        isDead = true;
     }
 
     /**
@@ -134,10 +134,12 @@ public class Snake extends Thread
     }
 
     /**
-     * KILLS THE SNAKE
+     * KILLS THE SNAKE OR BRINGS IT TO LIFE
+     * 
+     * @param isDead whether or not the snake is dead
      */
-    public void death()
+    public void death(boolean isDead)
     {
-        isDead = true;
+        this.isDead = isDead;
     }
 }

@@ -18,30 +18,35 @@ public class CreateFruit
      * @param isEaten tells whether or not that fruit object has been eaten by the snake
      * @param location the location of that fruit on the game board
      */
-    public CreateFruit(boolean isEaten, Point location)
+    public CreateFruit(boolean isEaten, Point location, Graphics g)
     {
         Random r = new Random();
 
         int rand = r.nextInt(15);
-
+        Fruit fruit;
         if(rand <= 7)
         {
-            new Banana(isEaten, location);
+            fruit = new Banana(isEaten, location);
+            fruit.paint(g);
         }
         else if(rand <= 10)
         {
-            new Cherry(isEaten, location);
+            fruit = new Cherry(isEaten, location);
+            fruit.paint(g);
         }
         else if(rand <= 13)
         {
-            new Orange(isEaten, location);
+            fruit = new Orange(isEaten, location);
+            fruit.paint(g);
         }
         else
         {
-            new Blueberry(isEaten, location);
+            fruit = new Blueberry(isEaten, location);
+            fruit.paint(g);
         }
 
     }
+   
 }
 
 /**
