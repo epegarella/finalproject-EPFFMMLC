@@ -14,8 +14,16 @@ public class MancalaBoard implements Runnable
     private static final int BOARD_WIDTH = 1000;
     private static final int BOARD_HEIGHT = 500;
     
+    private static final int INFO_HEIGHT = 200;
+    
+    private static final Color buttonColor = new Color(201,174,97);
+    
     private JPanel gamePanel;
     private JPanel board;
+    
+    private JButton[] buttons;
+    private int[] buttonValues;
+    
     public void run()
     {
         JFrame frame = new JFrame("Mancala Board");
@@ -26,15 +34,29 @@ public class MancalaBoard implements Runnable
         board = new JPanel(new BorderLayout());
         
         JPanel infoPanel = new JPanel();
+        infoPanel.setPreferredSize(new Dimension(BOARD_WIDTH,INFO_HEIGHT));
         board.add(infoPanel, BorderLayout.NORTH);
         
         gamePanel = new JPanel(){
             public void paintComponent(Graphics g)
             {
-                setBackground(Color.YELLOW);
+                setBackground(new Color(253,253,150));
+                
+                
             }
         };
         board.add(gamePanel);
+        
+        JPanel gameGrid = new JPanel(new GridLayout(2,6));
+        buttons  = new JButton[12];
+        for (int i = 0; i < 12; i++)
+        {
+            buttonValues[i] = 0;
+            buttons[i] = new JButton("current marbles: " + buttonValues[i]);
+            buttons[i].setBackground(buttonColor);
+            
+            gameGrid.add(buttons[i]);
+        }
         
         frame.add(board);
         
