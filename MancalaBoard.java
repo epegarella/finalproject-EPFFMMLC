@@ -9,61 +9,100 @@ import javax.swing.event.*;
  * @author Francesca Fealey, Elizabeth Pegarella, Lauren Carleton, Meghan Micheli
  * @version Spring 2020
  */
-public class MancalaBoard implements Runnable
+public class MancalaBoard implements Runnable, ActionListener
 {
     private static final int BOARD_WIDTH = 1000;
     private static final int BOARD_HEIGHT = 500;
-    
+
     private static final int INFO_HEIGHT = 200;
-    
-    private static final Color buttonColor = new Color(201,174,97);
-    
+    private static final int BUTTON_SIZE = 10;
+
+    private static final int NUM_BUTTON = 12;
+
+    private static final Color BUTTON_COLOR = new Color(201,174,97);
+
     private JPanel gamePanel;
     private JPanel board;
-    
+
+    private int player1Till;
+    private int player2Till;
     private JButton[] buttons;
     private static final int[] buttonValues = new int[12];
-    
+
     public void run()
     {
         JFrame frame = new JFrame("Mancala Board");
-        
+
         frame.setPreferredSize(new Dimension(BOARD_WIDTH,BOARD_HEIGHT));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+
         board = new JPanel(new BorderLayout());
-        
+
         JPanel infoPanel = new JPanel();
         infoPanel.setPreferredSize(new Dimension(BOARD_WIDTH,INFO_HEIGHT));
         board.add(infoPanel, BorderLayout.NORTH);
-        
+
         gamePanel = new JPanel(){
             public void paintComponent(Graphics g)
             {
                 setBackground(new Color(253,253,150));
-                
-                
+
             }
         };
         board.add(gamePanel);
-        
+
         JPanel gameGrid = new JPanel(new GridLayout(2,6));
+        gameGrid.setPreferredSize(new Dimension(800, 300));
         buttons  = new JButton[12];
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < NUM_BUTTON; i++)
         {
-            buttonValues[i] = 0;
+            buttonValues[i] = 4;
             buttons[i] = new JButton("current marbles: " + buttonValues[i]);
-            buttons[i].setBackground(buttonColor);
-            
+
+            buttons[i].setBackground(BUTTON_COLOR);
+            buttons[i].setOpaque(true); 
+            buttons[i].setBorderPainted(false);
+
+            buttons[i].setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
             gameGrid.add(buttons[i]);
         }
+
+        player1Till = 0;
+        player2Till = 0;
         
+        board.add(gameGrid, BorderLayout.CENTER);
         frame.add(board);
-        
+
         frame.pack();
         frame.setVisible(true);
     }
-    
+
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        for (int i = 0; i < NUM_BUTTON; i++)
+        {
+            //This if statement will never get executed twice for one button push
+            if(buttons[i] == e.getSource())
+            {
+                for(int j = 0; j < buttonValues[i]; j++)
+                {
+                    //Player 2 moves probably come first
+                    if(i+j+1 < 12)
+                    {
+                        buttonValues[i+j+1] ++;
+                        
+                    }
+                    else
+                    {
+                        
+                    }
+                }
+                buttonValues[i] = 0;
+            }
+        }
+    }
+
     public static void main(String[] args)
     {
         javax.swing.SwingUtilities.invokeLater(new MancalaBoard());
