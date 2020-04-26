@@ -1,33 +1,49 @@
-
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.event.*;
 /**
- * Write a description of class MancalaBoard here.
+ * The MancalaBoard class will create the game board and start the game.
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Francesca Fealey, Elizabeth Pegarella, Lauren Carleton, Meghan Micheli
+ * @version Spring 2020
  */
-public class MancalaBoard
+public class MancalaBoard implements Runnable
 {
-    // instance variables - replace the example below with your own
-    private int x;
-
-    /**
-     * Constructor for objects of class MancalaBoard
-     */
-    public MancalaBoard()
+    private static final int BOARD_WIDTH = 1000;
+    private static final int BOARD_HEIGHT = 500;
+    
+    private JPanel gamePanel;
+    private JPanel board;
+    public void run()
     {
-        // initialise instance variables
-        x = 0;
+        JFrame frame = new JFrame("Mancala Board");
+        
+        frame.setPreferredSize(new Dimension(BOARD_WIDTH,BOARD_HEIGHT));
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        board = new JPanel(new BorderLayout());
+        
+        JPanel infoPanel = new JPanel();
+        board.add(infoPanel, BorderLayout.NORTH);
+        
+        gamePanel = new JPanel(){
+            public void paintComponent(Graphics g)
+            {
+                setBackground(Color.YELLOW);
+            }
+        };
+        board.add(gamePanel);
+        
+        frame.add(board);
+        
+        frame.pack();
+        frame.setVisible(true);
     }
-
-    /**
-     * An example of a method - replace this comment with your own
-     *
-     * @param  y  a sample parameter for a method
-     * @return    the sum of x and y
-     */
-    public int sampleMethod(int y)
+    
+    public static void main(String[] args)
     {
-        // put your code here
-        return x + y;
+        javax.swing.SwingUtilities.invokeLater(new MancalaBoard());
     }
 }
