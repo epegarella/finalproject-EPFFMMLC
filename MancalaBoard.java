@@ -22,7 +22,7 @@ public class MancalaBoard implements Runnable
     private JPanel board;
     
     private JButton[] buttons;
-    private int[] buttonValues;
+    private static final int[] buttonValues = new int[12];
     
     public void run()
     {
