@@ -51,6 +51,7 @@ public class MancalaBoard implements Runnable, ActionListener
         };
         board.add(gamePanel);
 
+        //Play with panel design and layout managers
         JPanel gameGrid = new JPanel(new GridLayout(2,6));
         gameGrid.setPreferredSize(new Dimension(800, 300));
         buttons  = new JButton[12];
