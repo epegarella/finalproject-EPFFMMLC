@@ -16,17 +16,20 @@ public class Snake extends Thread
 
     //Array of SIZE squares
     //Methods for directional movement
-    
+
     // Constants
     private static final int SIZE = 20;
     private static final int MOVE_SPEED = 10;
     private static final int MOVE_TIME = 100;
 
     // Instance Variables
-    private ArrayList<Point> snake;
+    private LinkedList<Point> snake;
     private boolean isDead;
     private Point snakeHead;
     private int moveDirection;
+    private boolean isMoving;
+    private boolean isGrowing;
+    private boolean isDying;
 
     /**
      * Constructor for objects of class Snake.
@@ -35,12 +38,13 @@ public class Snake extends Thread
      */
     public Snake(Point location)
     {
-        snake = new ArrayList<>();
+        snake = new LinkedList<>();
 
         snake.add(location);
 
         snakeHead = snake.get(0);
         isDead = true;
+        isMoving = false;
     }
 
     /**
@@ -48,6 +52,10 @@ public class Snake extends Thread
      */
     public void run()
     {
+        // Add a new square at the head and delete the square at the end
+        //Make snake an linked list
+        //eaten and growing add to head
+        // dying chop off tail
         while(!isDead)
         {
             try{
@@ -56,24 +64,41 @@ public class Snake extends Thread
             catch (InterruptedException e)
             {
             }
-            for(int i = 0 ; i < snake.size(); i++)
+            while(isMoving)
             {
-                if(moveDirection == 1)
+                for(int i = 0 ; i < snake.size(); i++)
                 {
-                    snake.set(i, new Point(snake.get(i).x , snake.get(i).y - MOVE_SPEED));
+                    if(moveDirection == 1)
+                    {
+                        snake.add(0, new Point(snake.get(i).x , snake.get(i).y - MOVE_SPEED));
+                        snake.removeLast();
+                    }
+                    else if(moveDirection == 2)
+                    {
+                        snake.add(0, new Point(snake.get(i).x - MOVE_SPEED, snake.get(i).y));
+                        snake.removeLast();
+                    }
+                    else if(moveDirection == 3)
+                    {
+                        snake.add(0, new Point(snake.get(i).x, snake.get(i).y + MOVE_SPEED));
+                        snake.removeLast();
+                    }
+                    else
+                    {
+                        snake.add(0, new Point(snake.get(i).x + MOVE_SPEED, snake.get(i).y));
+                        snake.removeLast();
+                    }
                 }
-                else if(moveDirection == 2)
-                {
-                    snake.set(i, new Point(snake.get(i).x - MOVE_SPEED, snake.get(i).y));
-                }
-                else if(moveDirection == 3)
-                {
-                    snake.set(i, new Point(snake.get(i).x, snake.get(i).y + MOVE_SPEED));
-                }
-                else
-                {
-                    snake.set(i, new Point(snake.get(i).x + MOVE_SPEED, snake.get(i).y));
-                }
+            }
+            while(isGrowing)
+            {
+                
+                
+                
+            }
+            while(isDying)
+            {
+                
             }
         }
     }
@@ -121,6 +146,7 @@ public class Snake extends Thread
     public void move(int moveDirection)
     {
         this.moveDirection = moveDirection;
+        isMoving = true;
     }
 
     /**
@@ -133,6 +159,11 @@ public class Snake extends Thread
         return isDead;
     }
 
+    public Point getSnakeHead()
+    {
+        return snake.getFirst();
+    }
+    
     /**
      * KILLS THE SNAKE OR BRINGS IT TO LIFE
      * 

@@ -13,7 +13,7 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
 {
     //Constants
     private static final int FRAME_SIZEX = 1000;
-    private static final int FRAME_SIZEY = 750;
+    private static final int FRAME_SIZEY = 700;
     private static final int INFO_SIZEX = 1000;
     private static final int INFO_SIZEY = 80;
     private static final int SNAKE_SIZE = 20;
@@ -31,7 +31,7 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
     private JLabel instructions;
     private JLabel key;
     private Random rand;
-    private CreateFruit fruit;
+    private Fruit fruit;
     private Point fruitLocation;
     //Either need to update the head or not have it as an instance variable
     //private Point snakeHead;
@@ -51,7 +51,7 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
 
         rand = new Random();
 
-        Point snakeHead = new Point(rand.nextInt(FRAME_SIZEX - SNAKE_SIZE), rand.nextInt(FRAME_SIZEY - INFO_SIZEY - SNAKE_SIZE));
+        Point snakeHead = new Point(rand.nextInt(FRAME_SIZEX - 2*SNAKE_SIZE), rand.nextInt(FRAME_SIZEY - INFO_SIZEY - 2*SNAKE_SIZE));
         mrSnake = new Snake(snakeHead); 
 
         panel = new JPanel(new BorderLayout());
@@ -61,13 +61,13 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
             {
                 setBackground(Color.BLACK);
                 mrSnake.paint(g);
-                
-                //Struggling with fruit class hierarchy to get fruit methods in CreateFruit or something
-                // if(!fruit.isEaten() && fruitLocation != null)
-                // {
-                    // fruit = new CreateFruit(false, fruitLocation, g);
-                    
-                // }
+
+                if(!mrSnake.isDead())
+                {
+                    fruit.CreateFruit(false, fruitLocation, g);
+                    System.out.println("Snake: " + mrSnake.getSnakeHead());
+                    System.out.println("Fruit: " + fruitLocation);
+                }
 
             }
         };
@@ -79,11 +79,14 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
         instructions = new JLabel("Use WASD keys to move the snake to eat the fruit. Be careful not to hit the walls! " +
             "Each fruit is worth a different amount of points. ");
         key = new JLabel("Fruits are worth: \t Banana: 10 \t Cherry: 20  \t Orange: 30 \t Blueberry: 50");
-        totalScore = new JLabel("Your score is: " + score);
+        totalScore = new 
+        JLabel("Your score is: " + score);
 
         instructions.setFont(new Font("Serif", Font.PLAIN, 18));
-        key.setFont(new Font("Serif", Font.PLAIN, 18));
-        totalScore.setFont(new Font("Serif", Font.PLAIN, 18));
+        key.setFont(new 
+            Font("Serif", Font.PLAIN, 18));
+        totalScore.setFont(new 
+            Font("Serif", Font.PLAIN, 18));
 
         startButton = new JButton();
         startButton.setText("Start");
@@ -94,7 +97,6 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
         infoArea.add(startButton);
         startButton.addActionListener(this);
 
-
         panel.add(gamePlayPanel);
         panel.add(infoArea, BorderLayout.NORTH);
         frame.add(panel);
@@ -104,8 +106,27 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
         //This eventually going to be with the start button
         //gamePlay();
 
+        mrSnake.start();
+
         frame.pack();
         frame.setVisible(true);
+        new Thread(){
+            @Override
+            public void run(){
+                while (true){
+                    try {
+                        sleep(33);
+                    }
+                    catch(InterruptedException e){
+                        System.out.println(e);
+                    }
+
+                    gamePlayPanel.repaint();
+                    start();
+                }
+
+            }
+        };
 
     }
 
@@ -116,25 +137,27 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
     {
         // maybe see if we want to kill the snake if he hits himself too
 
-        // if(snakeHead.x < 0  || snakeHead.x > FRAME_SIZEX - SNAKE_SIZE )
-        // {
-        // mrSnake.death();
-        // }
-        // if(snakeHead.y < 0 || snakeHead.y > FRAME_SIZEX + SNAKE_SIZE)
-        // {
-        // mrSnake.death();
-        // }
-        while(!mrSnake.isDead())
+        if(mrSnake.getSnakeHead().x < 0  || mrSnake.getSnakeHead().x > FRAME_SIZEX - SNAKE_SIZE )
         {
-            try{
-                Thread.sleep(SLEEP_TIME);
-            }
-            catch (InterruptedException e)
-            {
-            }
-
-            gamePlayPanel.repaint();
+            mrSnake.death(true);
         }
+        if(mrSnake.getSnakeHead().y < 0 || mrSnake.getSnakeHead().y > FRAME_SIZEX + SNAKE_SIZE)
+        {
+            mrSnake.death(true);
+        }
+        //while(!mrSnake.isDead())
+        //{
+        //gamePlayPanel.repaint();
+
+        if(mrSnake.getSnakeHead() == fruitLocation)
+        {
+            fruit.eatFruit();
+
+            //call scoring
+            //grow snake
+
+        }
+        //}
 
     }
 
@@ -145,12 +168,14 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
      * @param e The KeyEvent object 
      */
     @Override
-    public void keyPressed(KeyEvent e)
+    public void keyTyped(KeyEvent e)
     {
 
-        if(e.getKeyChar() == 'w')
+        if(e.getKeyChar() == KeyEvent.VK_W)
         {
+            System.out.println("Beginning of W");
             mrSnake.move(1);
+            System.out.println("End of W");
         }
         else if(e.getKeyChar() == 'a')
         {
@@ -164,8 +189,7 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
         {
             mrSnake.move(4);
         }
-        gamePlay();
-        //gamePlayPanel.repaint();
+        System.out.println("End of KeyPressed");
     }
 
     @Override
@@ -174,13 +198,12 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
         if(startButton == e.getSource())
         {
             mrSnake.death(false);
-            mrSnake.start();
 
             //Cant be where a snake is maybe set it to isEaten if its where the snake is
-            fruitLocation = new Point(rand.nextInt(FRAME_SIZEX - Fruit.SIZE), rand.nextInt(FRAME_SIZEY - INFO_SIZEY - Fruit.SIZE));
-
+            fruitLocation = new Point(rand.nextInt(FRAME_SIZEX - 2 *Fruit.SIZE), rand.nextInt(FRAME_SIZEY - INFO_SIZEY - 2*Fruit.SIZE));
             gamePlayPanel.repaint();
         }
+        gamePlay();
     }
 
     /**
