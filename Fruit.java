@@ -72,8 +72,6 @@ abstract class Fruit
         return growthFactor;
     }
 
-    //@Override
-    //What do we need to implement/extend so that the override works correctly?
     /**
      * Paints the fruit on the game board in the correct color and a 
      * random location, which was generated in the GameBoard class.

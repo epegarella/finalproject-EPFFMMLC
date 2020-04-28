@@ -50,7 +50,8 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         rand = new Random();
-
+        
+        //Multiples of 10 for positions
         Point snakeHead = new Point(rand.nextInt(FRAME_SIZEX - 2*SNAKE_SIZE), rand.nextInt(FRAME_SIZEY - INFO_SIZEY - 2*SNAKE_SIZE));
         mrSnake = new Snake(snakeHead); 
 
@@ -65,8 +66,8 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
                 if(!mrSnake.isDead())
                 {
                     fruit.CreateFruit(false, fruitLocation, g);
-                    System.out.println("Snake: " + mrSnake.getSnakeHead());
-                    System.out.println("Fruit: " + fruitLocation);
+                    //System.out.println("Snake: " + mrSnake.getSnakeHead());
+                    //System.out.println("Fruit: " + fruitLocation);
                 }
 
             }
@@ -102,6 +103,11 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
         frame.add(panel);
 
         frame.addKeyListener(this);
+        panel.addKeyListener(this);
+        gamePlayPanel.addKeyListener(this);
+        startButton.addKeyListener(this);
+        
+        frame.transferFocusDownCycle();
 
         //This eventually going to be with the start button
         //gamePlay();
@@ -122,11 +128,11 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
                     }
 
                     gamePlayPanel.repaint();
-                    start();
+                    
                 }
 
             }
-        };
+        }.start();
 
     }
 
@@ -168,10 +174,10 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
      * @param e The KeyEvent object 
      */
     @Override
-    public void keyTyped(KeyEvent e)
+    public void keyPressed(KeyEvent e)
     {
 
-        if(e.getKeyChar() == KeyEvent.VK_W)
+        if(e.getKeyCode() == KeyEvent.VK_W)
         {
             System.out.println("Beginning of W");
             mrSnake.move(1);
@@ -179,7 +185,9 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
         }
         else if(e.getKeyChar() == 'a')
         {
+            System.out.println("Beginning of A");
             mrSnake.move(2);
+            System.out.println("End of A");
         }
         else if(e.getKeyChar() == 's')
         {
