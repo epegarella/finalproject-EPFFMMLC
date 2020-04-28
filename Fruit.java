@@ -33,6 +33,16 @@ abstract class Fruit
         this.location = location;
     }
 
+     /**
+     * Gets whether or not the fruit has been eaten
+     * 
+     * @ return isEaten
+     */
+    public boolean getIsEaten()
+    {
+        return isEaten;
+    }
+    
     /**
      * Sets the fruit to have been eaten
      * 

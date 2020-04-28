@@ -19,8 +19,8 @@ public class Snake extends Thread
 
     // Constants
     private static final int SIZE = 20;
-    private static final int MOVE_SPEED = 10;
-    private static final int MOVE_TIME = 1000;
+    private static final int MOVE_SPEED = 20;
+    private static final int MOVE_TIME = 500;
 
     // Instance Variables
     private LinkedList<Point> snake;
@@ -68,7 +68,7 @@ public class Snake extends Thread
             }
         }
         
-        System.out.println("Snake Run");
+       // System.out.println("Snake Run");
         while(!isDead)
         {
             try{
@@ -79,7 +79,7 @@ public class Snake extends Thread
             }
             if(isMoving)
             {
-                System.out.println(moveDirection);
+                //System.out.println(moveDirection);
                 if(moveDirection == 1)
                 {
                     snake.add(0, new Point(snake.get(0).x , snake.get(0).y - MOVE_SPEED));

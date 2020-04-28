@@ -50,9 +50,9 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         rand = new Random();
-        
+
         //Multiples of 10 for positions
-        Point snakeHead = new Point(rand.nextInt(FRAME_SIZEX - 2*SNAKE_SIZE), rand.nextInt(FRAME_SIZEY - INFO_SIZEY - 2*SNAKE_SIZE));
+        Point snakeHead = randomPoint();
         mrSnake = new Snake(snakeHead); 
 
         panel = new JPanel(new BorderLayout());
@@ -65,14 +65,28 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
 
                 if(!mrSnake.isDead())
                 {
-                    fruit.CreateFruit(false, fruitLocation, g);
-                    //System.out.println("Snake: " + mrSnake.getSnakeHead());
-                    //System.out.println("Fruit: " + fruitLocation);
-                }
+                    if(fruit != null)
+                    {
+                        if(fruit.getIsEaten())
+                        {
+                            fruitLocation = randomPoint();
+                            fruit = fruit.CreateFruit(false, fruitLocation, g);
+                        }
+                        else 
+                        {
+                            fruit.paint(g);
+                        }
+                    }
+                    else
+                    {
+                        fruit = fruit.CreateFruit(false, fruitLocation, g);
+                    }
 
+                }
             }
         };
-        infoArea = new JPanel();
+        infoArea = new 
+        JPanel();
         BoxLayout boxlayout = new BoxLayout(infoArea, BoxLayout.Y_AXIS);
         infoArea.setLayout(boxlayout);
         infoArea.setPreferredSize(new Dimension(INFO_SIZEX, INFO_SIZEY));
@@ -106,7 +120,7 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
         panel.addKeyListener(this);
         gamePlayPanel.addKeyListener(this);
         startButton.addKeyListener(this);
-        
+
         frame.transferFocusDownCycle();
 
         //This eventually going to be with the start button
@@ -126,13 +140,15 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
                     catch(InterruptedException e){
                         System.out.println(e);
                     }
-
+                    gamePlay();
                     gamePlayPanel.repaint();
-                    
+
                 }
 
             }
-        }.start();
+        }.
+
+        start();
 
     }
 
@@ -155,13 +171,19 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
         //{
         //gamePlayPanel.repaint();
 
-        if(mrSnake.getSnakeHead() == fruitLocation)
+        if(!mrSnake.isDead())
         {
-            fruit.eatFruit();
+            if((mrSnake.getSnakeHead().x >= fruitLocation.x && mrSnake.getSnakeHead().x <= fruitLocation.x + Fruit.SIZE)
+            && (mrSnake.getSnakeHead().y >= fruitLocation.y && mrSnake.getSnakeHead().y <= fruitLocation.y + Fruit.SIZE))
+            {
+                scoring();
+                fruit.eatFruit();
+                
 
-            //call scoring
-            //grow snake
+                //call scoring
+                //grow snake
 
+            }
         }
         //}
 
@@ -176,28 +198,22 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
     @Override
     public void keyPressed(KeyEvent e)
     {
-
         if(e.getKeyCode() == KeyEvent.VK_W)
         {
-            System.out.println("Beginning of W");
             mrSnake.move(1);
-            System.out.println("End of W");
         }
-        else if(e.getKeyChar() == 'a')
+        else if(e.getKeyCode() == KeyEvent.VK_A)
         {
-            System.out.println("Beginning of A");
             mrSnake.move(2);
-            System.out.println("End of A");
         }
-        else if(e.getKeyChar() == 's')
+        else if(e.getKeyCode() == KeyEvent.VK_S)
         {
             mrSnake.move(3);
         }
-        else if(e.getKeyChar() == 'd')
+        else if(e.getKeyCode() == KeyEvent.VK_D)
         {
             mrSnake.move(4);
         }
-        System.out.println("End of KeyPressed");
     }
 
     @Override
@@ -208,10 +224,11 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
             mrSnake.death(false);
 
             //Cant be where a snake is maybe set it to isEaten if its where the snake is
-            fruitLocation = new Point(rand.nextInt(FRAME_SIZEX - 2 *Fruit.SIZE), rand.nextInt(FRAME_SIZEY - INFO_SIZEY - 2*Fruit.SIZE));
+            fruitLocation = randomPoint();
             gamePlayPanel.repaint();
+            gamePlay();
         }
-        gamePlay();
+
     }
 
     /**
@@ -219,8 +236,16 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
      */
     public void scoring()
     {
-
+        if(!fruit.getIsEaten())
+        {
+            score += fruit.getPoints();
+        }
         totalScore.setText("Your score is: " + score);
+    }
+
+    public Point randomPoint()
+    {
+        return new Point(rand.nextInt(FRAME_SIZEX - 2 *Fruit.SIZE), rand.nextInt(FRAME_SIZEY - INFO_SIZEY - 2*Fruit.SIZE));
     }
 
     //if snake eats fruit call snakes grow method
