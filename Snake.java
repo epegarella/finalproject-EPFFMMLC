@@ -20,7 +20,7 @@ public class Snake extends Thread
     // Constants
     private static final int SIZE = 20;
     private static final int MOVE_SPEED = 20;
-    private static final int MOVE_TIME = 500;
+    private static final int MOVE_TIME = 250;
 
     // Instance Variables
     private LinkedList<Point> snake;
@@ -30,6 +30,7 @@ public class Snake extends Thread
     private boolean isMoving;
     private boolean isGrowing;
     private boolean isDying;
+    private int growth;
 
     /**
      * Constructor for objects of class Snake.
@@ -52,11 +53,7 @@ public class Snake extends Thread
      */
     public void run()
     {
-        // Add a new square at the head and delete the square at the end
-        //Make snake an linked list
-        //eaten and growing add to head
-        // dying chop off tail
-        
+
         //Snake not yet alive loop
         while(isDead)
         {
@@ -67,8 +64,7 @@ public class Snake extends Thread
             {
             }
         }
-        
-       // System.out.println("Snake Run");
+
         while(!isDead)
         {
             try{
@@ -77,9 +73,35 @@ public class Snake extends Thread
             catch (InterruptedException e)
             {
             }
-            if(isMoving)
+            if(isGrowing)
             {
-                //System.out.println(moveDirection);
+                for(int i = 0; i < growth; i ++)
+                {
+                    if(moveDirection == 1)
+                    {
+                        snake.add(0, new Point(snake.get(0).x , snake.get(0).y - MOVE_SPEED));
+
+                    }
+                    else if(moveDirection == 2)
+                    {
+                        snake.add(0, new Point(snake.get(0).x - MOVE_SPEED, snake.get(0).y));
+
+                    }
+                    else if(moveDirection == 3)
+                    {
+                        snake.add(0, new Point(snake.get(0).x, snake.get(0).y + MOVE_SPEED));
+
+                    }
+                    else
+                    {
+                        snake.add(0, new Point(snake.get(0).x + MOVE_SPEED, snake.get(0).y));
+
+                    }
+                }
+                isGrowing = false;
+            }
+            else if(isMoving)
+            {
                 if(moveDirection == 1)
                 {
                     snake.add(0, new Point(snake.get(0).x , snake.get(0).y - MOVE_SPEED));
@@ -100,21 +122,20 @@ public class Snake extends Thread
                     snake.add(0, new Point(snake.get(0).x + MOVE_SPEED, snake.get(0).y));
                     snake.removeLast();
                 }
-
             }
-            if(isGrowing)
-            {
 
-            }
-            if(isDying)
-            {
+            //Idea but does not work
+            // for(int i = 0; i < snake.size(); i ++)
+            // {
+                // if (getSnakeHead() != snake.get(i))
+                // {
+                    // death(true);
+                // }
+            // }
 
-            }
         }
     }
 
-    //@Override
-    //What do we need to implement/extend so that the override works correctly?
     /**
      * Paints the snake on the game board in the correct color 
      * and a random location, which is generated in the GameBoard class.
@@ -134,18 +155,14 @@ public class Snake extends Thread
     }
 
     /**
-     * This will grow the snake the appropriate length.
+     * Sets the instance variable isGrowing to the inputed value
      * 
-     * @param growthFactor The amount the snake will grow depending on which fruit was eaten
+     * @param isGrowing whether or not the snake is growing
      */
-    public void grow(int growthFactor)
+    public void setGrowing(boolean isGrowing, int growth)
     {
-        for(int i = 0; i < growthFactor; i++)
-        {
-            //If snake changes direction how are we sure where the new points should go?
-            //But for right now let's go with:
-            snake.add(new Point(snake.get(snake.size() -1).x + SIZE, snake.get(snake.size() -1).y + SIZE));
-        }
+        this.isGrowing = isGrowing;
+        this.growth = growth;
     }
 
     /**
@@ -169,6 +186,11 @@ public class Snake extends Thread
         return isDead;
     }
 
+    /**
+     * Gets the Point where the snakes head is
+     *
+     * @return The point of the snakes head
+     */
     public Point getSnakeHead()
     {
         return snake.getFirst();

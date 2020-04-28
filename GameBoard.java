@@ -33,8 +33,6 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
     private Random rand;
     private Fruit fruit;
     private Point fruitLocation;
-    //Either need to update the head or not have it as an instance variable
-    //private Point snakeHead;
     private Snake mrSnake;
 
     /**
@@ -51,7 +49,6 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
 
         rand = new Random();
 
-        //Multiples of 10 for positions
         Point snakeHead = randomPoint();
         mrSnake = new Snake(snakeHead); 
 
@@ -61,10 +58,10 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
             public void paintComponent(Graphics g)
             {
                 setBackground(Color.BLACK);
-                mrSnake.paint(g);
 
                 if(!mrSnake.isDead())
                 {
+                    mrSnake.paint(g);
                     if(fruit != null)
                     {
                         if(fruit.getIsEaten())
@@ -123,11 +120,7 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
 
         frame.transferFocusDownCycle();
 
-        //This eventually going to be with the start button
-        //gamePlay();
-
         mrSnake.start();
-
         frame.pack();
         frame.setVisible(true);
         new Thread(){
@@ -157,35 +150,31 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
      */
     public void gamePlay()
     {
-        // maybe see if we want to kill the snake if he hits himself too
 
-        if(mrSnake.getSnakeHead().x < 0  || mrSnake.getSnakeHead().x > FRAME_SIZEX - SNAKE_SIZE )
-        {
-            mrSnake.death(true);
-        }
-        if(mrSnake.getSnakeHead().y < 0 || mrSnake.getSnakeHead().y > FRAME_SIZEX + SNAKE_SIZE)
-        {
-            mrSnake.death(true);
-        }
-        //while(!mrSnake.isDead())
-        //{
-        //gamePlayPanel.repaint();
 
         if(!mrSnake.isDead())
         {
-            if((mrSnake.getSnakeHead().x >= fruitLocation.x && mrSnake.getSnakeHead().x <= fruitLocation.x + Fruit.SIZE)
-            && (mrSnake.getSnakeHead().y >= fruitLocation.y && mrSnake.getSnakeHead().y <= fruitLocation.y + Fruit.SIZE))
+            if(mrSnake.getSnakeHead().x < 0  || mrSnake.getSnakeHead().x > FRAME_SIZEX - SNAKE_SIZE)
+            {
+                mrSnake.death(true);
+                   System.out.print("Snake DEAD X");
+            }
+            
+            if(mrSnake.getSnakeHead().y < INFO_SIZEY || mrSnake.getSnakeHead().y > FRAME_SIZEY)
+            {
+                mrSnake.death(true);
+                System.out.print("Snake DEAD Y");
+
+            }
+            if((mrSnake.getSnakeHead().x  + SNAKE_SIZE >= fruitLocation.x && mrSnake.getSnakeHead().x <= fruitLocation.x + Fruit.SIZE)
+            && (mrSnake.getSnakeHead().y  + SNAKE_SIZE >= fruitLocation.y && mrSnake.getSnakeHead().y <= fruitLocation.y + Fruit.SIZE))
             {
                 scoring();
+                mrSnake.setGrowing(true, fruit.growthFactor());
                 fruit.eatFruit();
-                
-
-                //call scoring
-                //grow snake
 
             }
         }
-        //}
 
     }
 
@@ -226,7 +215,6 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
             //Cant be where a snake is maybe set it to isEaten if its where the snake is
             fruitLocation = randomPoint();
             gamePlayPanel.repaint();
-            gamePlay();
         }
 
     }
