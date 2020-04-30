@@ -34,7 +34,7 @@ public class MancalaBoard implements Runnable, ActionListener
 
     public void run()
     {
-        JFrame frame = new JFrame("Mancala Board");
+        JFrame frame = new JFrame("Mancala");
 
         frame.setPreferredSize(new Dimension(BOARD_WIDTH,BOARD_HEIGHT));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -50,12 +50,36 @@ public class MancalaBoard implements Runnable, ActionListener
             {
                 setBackground(new Color(253,253,150));
 
-
             }
         };
         board.add(gamePanel);
 
-        //Play with panel design and layout managers
+        //Instruction Panel
+        JLabel objective = new JLabel("The objective of the game is to collect the most pieces by the end of the game.");
+        JLabel instructions = new JLabel("First Player 1 will click on one of the tills in their row. " +
+                "Then one of those marbles will be added to each till in a counter-clockwise direction." ); 
+        JLabel instructions2 = new JLabel("If you run into your own pocket the score will increase. "+
+                "However, if you run into the other players, it will be skipped. ");
+        JLabel instructions3 = new JLabel("If the last piece drops in your score pocket you take another turn.");  
+        JLabel instructions4 = new JLabel("If the last piece falls into an empty till on your side," + 
+                "then all of the marbles in your opponents opposite till get added to your score" );
+
+        JLabel winning = new JLabel("The game ends when all of the tills on one side of the board are empty. " +
+                "The marbles in the opponents tills at the end get added to their score.");
+
+        JLabel blank = new JLabel("-----------------------------------------------------------------");
+        JLabel playerInstructions = new JLabel("Player one is on the bottom line of tills. "
+                +"Player two is on the top line of tills.");
+
+        infoPanel.add(objective);
+        infoPanel.add(instructions);
+        infoPanel.add(instructions2);
+        infoPanel.add(instructions3);
+        infoPanel.add(instructions4);
+        infoPanel.add(winning);
+        infoPanel.add(blank);
+        infoPanel.add(playerInstructions);
+        //Button Set up
         JPanel gameGrid = new JPanel(new GridLayout(2,6));
         gameGrid.setPreferredSize(new Dimension(BOARD_WIDTH - 2 *END_TILL_SIZE , BOARD_HEIGHT - INFO_HEIGHT));
         buttons  = new JButton[12];
@@ -75,8 +99,8 @@ public class MancalaBoard implements Runnable, ActionListener
         player1Till = 0;
         player2Till = 0;
 
-        rightTill = new JLabel(" Marbles: " + player1Till);
-        leftTill = new JLabel("Marbles: " + player2Till);
+        rightTill = new JLabel("Player 1: " + player1Till);
+        leftTill = new JLabel("Player 2: " + player2Till);
 
         gamePanel.add(leftTill);
         gamePanel.add(gameGrid);
@@ -115,6 +139,7 @@ public class MancalaBoard implements Runnable, ActionListener
         }
 
     }
+
     public static void main(String[] args)
     {
         javax.swing.SwingUtilities.invokeLater(new MancalaBoard());
