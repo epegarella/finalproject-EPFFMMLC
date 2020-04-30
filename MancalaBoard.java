@@ -17,13 +17,16 @@ public class MancalaBoard implements Runnable, ActionListener
     private static final int INFO_HEIGHT = 200;
     private static final int BUTTON_SIZE = 10;
 
+    private static final int END_TILL_SIZE = 100;
+
     private static final int NUM_BUTTON = 12;
 
     private static final Color BUTTON_COLOR = new Color(201,174,97);
 
     private JPanel gamePanel;
     private JPanel board;
-
+    private JLabel leftTill;
+    private JLabel rightTill;
     private int player1Till;
     private int player2Till;
     private JButton[] buttons;
@@ -47,18 +50,19 @@ public class MancalaBoard implements Runnable, ActionListener
             {
                 setBackground(new Color(253,253,150));
 
+
             }
         };
         board.add(gamePanel);
 
         //Play with panel design and layout managers
         JPanel gameGrid = new JPanel(new GridLayout(2,6));
-        gameGrid.setPreferredSize(new Dimension(800, 300));
+        gameGrid.setPreferredSize(new Dimension(BOARD_WIDTH - 2 *END_TILL_SIZE , BOARD_HEIGHT - INFO_HEIGHT));
         buttons  = new JButton[12];
         for (int i = 0; i < NUM_BUTTON; i++)
         {
             buttonValues[i] = 4;
-            buttons[i] = new JButton("current marbles: " + buttonValues[i]);
+            buttons[i] = new JButton("Marbles: " + buttonValues[i]);
 
             buttons[i].setBackground(BUTTON_COLOR);
             buttons[i].setOpaque(true); 
@@ -70,10 +74,15 @@ public class MancalaBoard implements Runnable, ActionListener
 
         player1Till = 0;
         player2Till = 0;
-        
-        board.add(gameGrid, BorderLayout.CENTER);
-        frame.add(board);
 
+        rightTill = new JLabel(" Marbles: " + player1Till);
+        leftTill = new JLabel("Marbles: " + player2Till);
+
+        gamePanel.add(leftTill);
+        gamePanel.add(gameGrid);
+        gamePanel.add(rightTill);
+
+        frame.add(board);
         frame.pack();
         frame.setVisible(true);
     }
@@ -92,18 +101,20 @@ public class MancalaBoard implements Runnable, ActionListener
                     if(i+j+1 < 12)
                     {
                         buttonValues[i+j+1] ++;
-                        
+
                     }
                     else
                     {
-                        
+
                     }
                 }
                 buttonValues[i] = 0;
             }
+            //Would reset too many times
+            buttons[i].setText("Marbles: " + buttonValues[i]);
         }
-    }
 
+    }
     public static void main(String[] args)
     {
         javax.swing.SwingUtilities.invokeLater(new MancalaBoard());
