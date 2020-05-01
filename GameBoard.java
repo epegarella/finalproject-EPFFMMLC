@@ -20,15 +20,12 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
     private static final int SLEEP_TIME = 500;
 
     //Instance Variables
-
-    private JPanel infoArea;
     private JPanel panel;
     private JPanel gamePlayPanel;
     private boolean running;
     private int score;
     private JButton startButton;
     private JLabel totalScore;
-    private JLabel instructions;
     private JLabel key;
     private Random rand;
     private Fruit fruit;
@@ -82,23 +79,19 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
                 }
             }
         };
-        infoArea = new 
-        JPanel();
+        JPanel infoArea = new JPanel();
         BoxLayout boxlayout = new BoxLayout(infoArea, BoxLayout.Y_AXIS);
         infoArea.setLayout(boxlayout);
         infoArea.setPreferredSize(new Dimension(INFO_SIZEX, INFO_SIZEY));
 
-        instructions = new JLabel("Use WASD keys to move the snake to eat the fruit. Be careful not to hit the walls! " +
+        JLabel instructions = new JLabel("Use WASD keys to move the snake to eat the fruit. Be careful not to hit the walls! " +
             "Each fruit is worth a different amount of points. ");
         key = new JLabel("Fruits are worth: \t Banana: 10 \t Cherry: 20  \t Orange: 30 \t Blueberry: 50");
-        totalScore = new 
-        JLabel("Your score is: " + score);
+        totalScore = new JLabel("Your score is: " + score);
 
         instructions.setFont(new Font("Serif", Font.PLAIN, 18));
-        key.setFont(new 
-            Font("Serif", Font.PLAIN, 18));
-        totalScore.setFont(new 
-            Font("Serif", Font.PLAIN, 18));
+        key.setFont(new Font("Serif", Font.PLAIN, 18));
+        totalScore.setFont(new Font("Serif", Font.PLAIN, 18));
 
         startButton = new JButton();
         startButton.setText("Start");
@@ -151,7 +144,6 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
     public void gamePlay()
     {
 
-
         if(!mrSnake.isDead())
         {
             if(mrSnake.getSnakeHead().x < 0  || mrSnake.getSnakeHead().x > FRAME_SIZEX - SNAKE_SIZE)
@@ -159,8 +151,7 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
                 mrSnake.death(true);
                    System.out.print("Snake DEAD X");
             }
-            
-            if(mrSnake.getSnakeHead().y < INFO_SIZEY || mrSnake.getSnakeHead().y > FRAME_SIZEY)
+            if(mrSnake.getSnakeHead().y < 0|| mrSnake.getSnakeHead().y > FRAME_SIZEY)
             {
                 mrSnake.death(true);
                 System.out.print("Snake DEAD Y");
@@ -174,6 +165,7 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
                 fruit.eatFruit();
 
             }
+            mrSnake.hitting();
         }
 
     }

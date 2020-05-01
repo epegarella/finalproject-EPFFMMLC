@@ -123,17 +123,23 @@ public class Snake extends Thread
                     snake.removeLast();
                 }
             }
+            
 
             //Idea but does not work
-            // for(int i = 0; i < snake.size(); i ++)
-            // {
-                // if (getSnakeHead() != snake.get(i))
-                // {
-                    // death(true);
-                // }
-            // }
+            
 
         }
+    }
+    
+    public void hitting()
+    {
+        for(int i = 1; i < snake.size(); i ++)
+            {
+                if (getSnakeHead().equals(snake.get(i)))
+                {
+                    death(true);
+                }
+            }
     }
 
     /**
