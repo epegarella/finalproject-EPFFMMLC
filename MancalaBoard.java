@@ -31,6 +31,7 @@ public class MancalaBoard implements Runnable, ActionListener
     private int player2Till;
     private JButton[] buttons;
     private static final int[] buttonValues = new int[12];
+    private boolean player1Playing;
 
     public void run()
     {
@@ -38,6 +39,8 @@ public class MancalaBoard implements Runnable, ActionListener
 
         frame.setPreferredSize(new Dimension(BOARD_WIDTH,BOARD_HEIGHT));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        player1Playing = true;
 
         board = new JPanel(new BorderLayout());
 
@@ -79,6 +82,7 @@ public class MancalaBoard implements Runnable, ActionListener
         infoPanel.add(winning);
         infoPanel.add(blank);
         infoPanel.add(playerInstructions);
+
         //Button Set up
         JPanel gameGrid = new JPanel(new GridLayout(2,6));
         gameGrid.setPreferredSize(new Dimension(BOARD_WIDTH - 2 *END_TILL_SIZE , BOARD_HEIGHT - INFO_HEIGHT));
@@ -91,6 +95,7 @@ public class MancalaBoard implements Runnable, ActionListener
             buttons[i].setBackground(BUTTON_COLOR);
             buttons[i].setOpaque(true); 
             buttons[i].setBorderPainted(false);
+            buttons[i].addActionListener(this);
 
             buttons[i].setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
             gameGrid.add(buttons[i]);
@@ -106,6 +111,7 @@ public class MancalaBoard implements Runnable, ActionListener
         gamePanel.add(gameGrid);
         gamePanel.add(rightTill);
 
+        
         frame.add(board);
         frame.pack();
         frame.setVisible(true);
@@ -114,28 +120,128 @@ public class MancalaBoard implements Runnable, ActionListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
+        int marbleNum;
+        int j = 0;
+        int buttonIndex;
         for (int i = 0; i < NUM_BUTTON; i++)
         {
             //This if statement will never get executed twice for one button push
             if(buttons[i] == e.getSource())
             {
-                for(int j = 0; j < buttonValues[i]; j++)
-                {
-                    //Player 2 moves probably come first
-                    if(i+j+1 < 12)
-                    {
-                        buttonValues[i+j+1] ++;
+                //Makes sure the player is trying to move their own marbles
 
+                marbleNum = buttonValues[i];
+
+                //Player1's Turn
+                if (player1Playing && (i > 5 && i < 12))
+                {             
+                    buttonIndex = i + 1;
+                    buttonValues[i] = 0;
+                    while(marbleNum != 0)
+                    {
+                        //On player1's side of the board
+                        if(i+j+1 < 12)
+                        {
+                            buttonValues[buttonIndex] ++;
+                            marbleNum--;
+                            buttonIndex ++;
+
+                        }
+                        //Increase player1's score by putting a marble in the score till
+                        else if (i+j+1 == 12)
+                        {
+                            player1Till ++;
+                            marbleNum--;
+                        }
+                        //On player2's side of the board
+                        else if (i+j+1 < 19)
+                        {
+                            buttonIndex = 5;
+                            //Loop through player2's side of the board until there are no marbles left
+                            //Or we have gotten back to player 1's side
+                            while (buttonIndex >= 0 && marbleNum != 0)
+                            {
+                                buttonValues[buttonIndex] ++;
+                                marbleNum--;
+                                buttonIndex--;
+                            }
+                            buttonIndex = 6;
+                        }
+                        j++;
+                    }
+
+                    //If the last marble was placed in the till it is player1's turn again
+                    //Otherwise it is player2's turn
+                    if (i+j+1 == 13)
+                    {
+                        player1Playing = true;
                     }
                     else
                     {
-
+                        player1Playing = false;
                     }
+
+                    //Reinitialize j to 0
+                    j = 0;
                 }
-                buttonValues[i] = 0;
+
+                //Player2's turn
+                if(!player1Playing && (i >=0 && i < 6))
+                {
+                    buttonIndex = i - 1;
+                    buttonValues[i] = 0;
+                    while(marbleNum != 0)
+                    {
+                        //Player1's side of the board
+                        if(i-j-1 < 0)
+                        {
+                            buttonIndex = 6;
+                            //Loop through player1's side of the board until there are no marbles left
+                            //Or we have gotten back to player 2's side
+                            while (buttonIndex <= 11 && marbleNum != 0)
+                            {
+                                buttonValues[buttonIndex] ++;
+                                marbleNum--;
+                                buttonIndex++;
+                            }
+                            buttonIndex = 5;
+                        }
+                        //Player2's side of the board
+                        else if(i-j-1 < 5)
+                        {
+                            buttonValues[buttonIndex] ++;
+                            marbleNum--;
+                            buttonIndex --;
+                        }
+                        //Increase player's score by putting a marble in the score till
+                        else if(i-j-1 == 0)
+                        {
+                            player2Till++;
+                            marbleNum--;
+                        }
+
+                        j++;
+                    }
+
+                    //If the last marble was placed in the till it is player2's turn again
+                    //Otherwise it is player1's turn
+                    if (i-j-1 == -1)
+                    {
+                        player1Playing = false;
+                    }
+                    else
+                    {
+                        player1Playing = true;
+                    }
+
+                    //reinitialize j to 0
+                    j = 0;
+                }
             }
             //Would reset too many times
             buttons[i].setText("Marbles: " + buttonValues[i]);
+            rightTill.setText("Player 1: " + player1Till);
+            leftTill.setText("Player 2: " + player2Till);
         }
 
     }
