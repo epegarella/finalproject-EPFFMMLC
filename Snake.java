@@ -65,6 +65,7 @@ public class Snake extends Thread
             }
         }
 
+        //Snake is not dead
         while(!isDead)
         {
             try{
@@ -73,6 +74,7 @@ public class Snake extends Thread
             catch (InterruptedException e)
             {
             }
+            //If the snake is growing
             if(isGrowing)
             {
                 for(int i = 0; i < growth; i ++)
@@ -123,23 +125,26 @@ public class Snake extends Thread
                     snake.removeLast();
                 }
             }
-            
 
-            //Idea but does not work
-            
 
         }
     }
-    
+
+    /**
+     * 
+     */
     public void hitting()
     {
-        for(int i = 1; i < snake.size(); i ++)
+        while(!isDead)
+        {
+            for(int i = 1; i < snake.size(); i ++)
             {
                 if (getSnakeHead().equals(snake.get(i)))
                 {
                     death(true);
                 }
             }
+        }
     }
 
     /**
