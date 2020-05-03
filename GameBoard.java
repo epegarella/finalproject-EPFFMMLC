@@ -11,7 +11,7 @@ import javax.swing.event.*;
  */
 public class GameBoard extends KeyAdapter implements Runnable, ActionListener
 {
-    //Constants
+    // Constants
     private static final int FRAME_SIZEX = 1000;
     private static final int FRAME_SIZEY = 700;
     private static final int INFO_SIZEX = 1000;
@@ -19,7 +19,7 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
     private static final int SNAKE_SIZE = 20;
     private static final int SLEEP_TIME = 500;
 
-    //Instance Variables
+    // Instance Variables
     private JPanel panel;
     private JPanel gamePlayPanel;
     private boolean running;
@@ -83,7 +83,7 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
         BoxLayout boxlayout = new BoxLayout(infoArea, BoxLayout.Y_AXIS);
         infoArea.setLayout(boxlayout);
         infoArea.setPreferredSize(new Dimension(INFO_SIZEX, INFO_SIZEY));
-
+        
         JLabel instructions = new JLabel("Use WASD keys to move the snake to eat the fruit. Be careful not to hit the walls! " +
             "Each fruit is worth a different amount of points. ");
         key = new JLabel("Fruits are worth: \t Banana: 10 \t Cherry: 20  \t Orange: 30 \t Blueberry: 50");
@@ -139,7 +139,7 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
     }
 
     /**
-     * Starts the game and ends the game if the snake hits the wall.
+     * Starts the game and ends the game if the snake hits the wall or itself.
      */
     public void gamePlay()
     {
@@ -151,12 +151,14 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
                 mrSnake.death(true);
                    System.out.print("Snake DEAD X");
             }
+            
             if(mrSnake.getSnakeHead().y < 0|| mrSnake.getSnakeHead().y > FRAME_SIZEY)
             {
                 mrSnake.death(true);
                 System.out.print("Snake DEAD Y");
 
             }
+            
             if((mrSnake.getSnakeHead().x  + SNAKE_SIZE >= fruitLocation.x && mrSnake.getSnakeHead().x <= fruitLocation.x + Fruit.SIZE)
             && (mrSnake.getSnakeHead().y  + SNAKE_SIZE >= fruitLocation.y && mrSnake.getSnakeHead().y <= fruitLocation.y + Fruit.SIZE))
             {
@@ -165,9 +167,9 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
                 fruit.eatFruit();
 
             }
+            
             mrSnake.hitting();
         }
-
     }
 
     /**
@@ -197,6 +199,12 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
         }
     }
 
+    /**
+     * Determines if the start button was pressed, and if
+     * it was start the game.
+     * 
+     * @param e The ActionEvent object 
+     */
     @Override
     public void actionPerformed(ActionEvent e)
     {
@@ -212,7 +220,7 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
     }
 
     /**
-     * Updates the score.
+     * Updates the score after a fruit is eaten.
      */
     public void scoring()
     {
@@ -223,15 +231,17 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
         totalScore.setText("Your score is: " + score);
     }
 
+    /**
+     * Generates a random point for the snake to appear at the start of the game,
+     * and generates a new random spot for each fruit that appears.
+     * 
+     * @return the upper left point to create the snake or the fruit
+     */
     public Point randomPoint()
     {
         return new Point(rand.nextInt(FRAME_SIZEX - 2 *Fruit.SIZE), rand.nextInt(FRAME_SIZEY - INFO_SIZEY - 2*Fruit.SIZE));
     }
-
-    //if snake eats fruit call snakes grow method
-    //randomly generate fruit location
-    //Snake movement where do we put that?
-
+    
     // main method
     public static void main(String[] args)
     {

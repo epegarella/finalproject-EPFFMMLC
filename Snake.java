@@ -14,9 +14,6 @@ import javax.swing.event.*;
 public class Snake extends Thread
 {
 
-    //Array of SIZE squares
-    //Methods for directional movement
-
     // Constants
     private static final int SIZE = 20;
     private static final int MOVE_SPEED = 20;
@@ -40,9 +37,7 @@ public class Snake extends Thread
     public Snake(Point location)
     {
         snake = new LinkedList<>();
-
         snake.add(location);
-
         snakeHead = snake.get(0);
         isDead = true;
         isMoving = false;
@@ -65,7 +60,7 @@ public class Snake extends Thread
             }
         }
 
-        //Snake is not dead
+        //Snake is not dead loop
         while(!isDead)
         {
             try{
@@ -125,13 +120,11 @@ public class Snake extends Thread
                     snake.removeLast();
                 }
             }
-
-
         }
     }
 
     /**
-     * 
+     * If the Snake hits itself the game will end; the snake head cannot touch another part of the snake.
      */
     public void hitting()
     {

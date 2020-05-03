@@ -14,6 +14,7 @@ import javax.swing.event.*;
  */
 abstract class Fruit
 {
+    // Instance variables
     protected boolean isEaten;
     protected int points;
     protected Point location;
@@ -175,7 +176,7 @@ class Cherry extends Fruit
 }
 
 /**
- * This class constructs an instance of Fruit as a Orange.
+ * This class constructs an instance of Fruit as an Orange.
  */
 class Orange extends Fruit
 {
