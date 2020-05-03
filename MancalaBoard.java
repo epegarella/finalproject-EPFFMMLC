@@ -11,18 +11,16 @@ import javax.swing.event.*;
  */
 public class MancalaBoard implements Runnable, ActionListener
 {
+    // Constants
     private static final int BOARD_WIDTH = 1000;
     private static final int BOARD_HEIGHT = 500;
-
     private static final int INFO_HEIGHT = 200;
     private static final int BUTTON_SIZE = 10;
-
     private static final int END_TILL_SIZE = 100;
-
     private static final int NUM_BUTTON = 12;
-
     private static final Color BUTTON_COLOR = new Color(201,174,97);
 
+    // Instance variables
     private JPanel gamePanel;
     private JPanel board;
     private JLabel leftTill;
@@ -33,6 +31,10 @@ public class MancalaBoard implements Runnable, ActionListener
     private static final int[] buttonValues = new int[12];
     private boolean player1Playing;
 
+    /**
+     * Creates the game board for the mancala game and adds information
+     * about how to play the game.
+     */
     public void run()
     {
         JFrame frame = new JFrame("Mancala");
@@ -110,13 +112,18 @@ public class MancalaBoard implements Runnable, ActionListener
         gamePanel.add(leftTill);
         gamePanel.add(gameGrid);
         gamePanel.add(rightTill);
-
         
         frame.add(board);
         frame.pack();
         frame.setVisible(true);
     }
 
+    /**
+     * Determines if the one of the marble tills was pressed, and if
+     * one was move the marbles accordingly.
+     * 
+     * @param e The ActionEvent object 
+     */
     @Override
     public void actionPerformed(ActionEvent e)
     {
@@ -246,6 +253,7 @@ public class MancalaBoard implements Runnable, ActionListener
 
     }
 
+    // main method
     public static void main(String[] args)
     {
         javax.swing.SwingUtilities.invokeLater(new MancalaBoard());
