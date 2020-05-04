@@ -188,7 +188,10 @@ public class MancalaBoard implements Runnable, ActionListener
                                     buttonIndex--;
                                 }
                                 buttonIndex = 6;
+                                j = -1;
                             }
+                            
+                            
                             j++;
                         }
 
@@ -244,7 +247,9 @@ public class MancalaBoard implements Runnable, ActionListener
                                 marbleNum--;
                                 buttonIndex --;
                             }
-
+                            
+                            
+                            
                             j++;
                         }
 
