@@ -12,7 +12,7 @@ import javax.swing.event.*;
 public class MancalaBoard implements Runnable, ActionListener
 {
     // Constants
-    private static final int BOARD_WIDTH = 1000;
+    private static final int BOARD_WIDTH = 1100;
     private static final int BOARD_HEIGHT = 500;
     private static final int INFO_HEIGHT = 220;
     private static final int BUTTON_SIZE = 10;
@@ -34,6 +34,10 @@ public class MancalaBoard implements Runnable, ActionListener
 
     private boolean gameEnded1;
     private boolean gameEnded2;
+
+    private int marbleNum;
+    private int buttonIndex;
+
     /**
      * Creates the game board for the mancala game and adds information
      * about how to play the game.
@@ -68,27 +72,32 @@ public class MancalaBoard implements Runnable, ActionListener
                 "Then one of those marbles will be added to each till in a counter-clockwise direction." ); 
         JLabel instructions2 = new JLabel("If you run into your own pocket the score will increase. "+
                 "However, if you run into the other players, it will be skipped. ");
-        JLabel instructions3 = new JLabel("If the last piece drops in your score pocket you take another turn.");  
-        JLabel instructions4 = new JLabel("If the last piece falls into an empty till on your side, " + 
-                "then all of the marbles in your opponents opposite till get added to your score" );
 
         JLabel winning = new JLabel("The game ends when all of the tills on one side of the board are empty. " +
                 "The marbles in the opponents tills at the end get added to their score.");
 
         JLabel blank = new JLabel("---------------------------------------------------------------------------------------" +
-        "-----------------------------");
+                "------------------------------------------------------------------------------------");
         JLabel playerInstructions = new JLabel("Player one is on the bottom line of tills. "
                 +"Player two is on the top line of tills.");
         JLabel blank2 = new JLabel("---------------------------------------------------------------------------------------" +
-        "-----------------------------");
-                
-        playerTurn = new JLabel ("Player 1's Turn");
+                "------------------------------------------------------------------------------------");
+
+        playerTurn = new JLabel ("Player 1 Playing");
+
+        Font instructionFont = new Font("Serif", Font.PLAIN, 18);
+        objective.setFont(instructionFont);
+        instructions.setFont(instructionFont);
+        instructions2.setFont(instructionFont);
+        winning.setFont(instructionFont);
+        playerInstructions.setFont(instructionFont);
+        playerTurn.setFont(instructionFont);
+        blank.setFont(instructionFont);
+        blank2.setFont(instructionFont);
 
         infoPanel.add(objective);
         infoPanel.add(instructions);
         infoPanel.add(instructions2);
-        infoPanel.add(instructions3);
-        infoPanel.add(instructions4);
         infoPanel.add(winning);
         infoPanel.add(blank);
         infoPanel.add(playerInstructions);
@@ -101,7 +110,7 @@ public class MancalaBoard implements Runnable, ActionListener
         buttons  = new JButton[12];
         for (int i = 0; i < NUM_BUTTON; i++)
         {
-            buttonValues[i] = 1;
+            buttonValues[i] = 4;
             buttons[i] = new JButton("Marbles: " + buttonValues[i]);
 
             buttons[i].setBackground(BUTTON_COLOR);
@@ -112,9 +121,7 @@ public class MancalaBoard implements Runnable, ActionListener
             buttons[i].setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
             gameGrid.add(buttons[i]);
         }
-        buttonValues[2] = 15;
-        buttons[2].setText("Marbles: " + buttonValues[2]);
-        
+
         gameEnded1 = false;
         gameEnded2 = false;
         player1Till = 0;
@@ -132,18 +139,9 @@ public class MancalaBoard implements Runnable, ActionListener
         frame.setVisible(true);
     }
 
-    /**
-     * Determines if the one of the marble tills was pressed, and if
-     * one was move the marbles accordingly.
-     * 
-     * @param e The ActionEvent object 
-     */
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        int marbleNum;
-        int j = 0;
-        int buttonIndex;
         if(!gameEnded1 && !gameEnded2)
         {
             for (int i = 0; i < NUM_BUTTON; i++)
@@ -151,127 +149,46 @@ public class MancalaBoard implements Runnable, ActionListener
                 //This if statement will never get executed twice for one button push
                 if(buttons[i] == e.getSource())
                 {
-                    //Makes sure the player is trying to move their own marbles
                     marbleNum = buttonValues[i];
-
-                    //Player1's Turn
+                    buttonValues[i] = 0;
                     if (player1Playing && (i > 5 && i < 12))
-                    {             
-                        buttonIndex = i + 1;
-                        buttonValues[i] = 0;
-                        while(marbleNum != 0)
+                    { 
+                        buttonIndex = 1 + i;
+                        while(marbleNum > 0)
                         {
-                            //On player1's side of the board
-                            if(i+j+1 < 12)
-                            {
-                                buttonValues[buttonIndex] ++;
-                                marbleNum--;
-                                buttonIndex ++;
+                            player1Side();
 
-                            }
-                            //Increase player1's score by putting a marble in the score till
-                            else if (i+j+1 == 12)
+                            if(marbleNum > 0)
                             {
                                 player1Till ++;
                                 marbleNum--;
                             }
-                            //On player2's side of the board
-                            else if (i+j+1 < 19)
-                            {
-                                buttonIndex = 5;
-                                //Loop through player2's side of the board until there are no marbles left
-                                //Or we have gotten back to player 1's side
-                                while (buttonIndex >= 0 && marbleNum != 0)
-                                {
-                                    buttonValues[buttonIndex] ++;
-                                    marbleNum--;
-                                    buttonIndex--;
-                                }
-                                buttonIndex = 6;
-                                j = -1;
-                            }
-                            
-                            
-                            j++;
+                            buttonIndex = 5;
+                            player2Side();
+                            buttonIndex = 6;
                         }
 
-                        //If the last marble was placed in the till it is player1's turn again
-                        //Otherwise it is player2's turn
-                        if (i+j+1 == 13)
-                        {
-                            player1Playing = true;
-                            playerTurn.setText("Player 1 Playing");
-                        }
-                        else
-                        {
-                            player1Playing = false;
-                            playerTurn.setText("Player 2 Playing");
-                        }
-
-                        //Reinitialize j to 0
-                        j = 0;
                     }
-
-                    //Player2's turn
-                    if(!player1Playing && (i >=0 && i < 6))
+                    else if (!player1Playing && (i >= 0 && i < 6))
                     {
                         buttonIndex = i - 1;
-                        buttonValues[i] = 0;
-                        while(marbleNum != 0)
+                        while(marbleNum > 0)
                         {
-                            //Increase player's score by putting a marble in the score till
-                            if(i-j-1 == -1)
+                            player2Side();
+
+                            if(marbleNum > 0)
                             {
-                                player2Till++;
+                                player2Till ++;
                                 marbleNum--;
                             }
-                            //Player1's side of the board
-                            else if(i-j-1 < 0)
-                            {
-                                buttonIndex = 6;
-                                //Loop through player1's side of the board until there are no marbles left
-                                //Or we have gotten back to player 2's side
-                                while (buttonIndex <= 11 && marbleNum != 0)
-                                {
-                                    buttonValues[buttonIndex] ++;
-                                    marbleNum--;
-                                    buttonIndex++;
-                                    
-                                }
-                                buttonIndex = 5;
-                            }
-                            //Player2's side of the board
-                            else if(i-j-1 < 5)
-                            {
-                                buttonValues[buttonIndex] ++;
-                                marbleNum--;
-                                buttonIndex --;
-                            }
-                            
-                            
-                            
-                            j++;
+
+                            buttonIndex = 6;
+                            player1Side();
+                            buttonIndex = 5;
                         }
 
-                        //If the last marble was placed in the till it is player2's turn again
-                        //Otherwise it is player1's turn
-                        if (i - j == -1)
-                        {
-                            player1Playing = false;
-                            playerTurn.setText("Player 2 Playing");
-                        }
-                        else
-                        {
-                            player1Playing = true;
-                            playerTurn.setText("Player 1 Playing");
-                        }
-
-                        //reinitialize j to 0
-                        j = 0;
                     }
-
                 }
-
             }
             for(int k = 0; k <  NUM_BUTTON; k++)
             {
@@ -279,6 +196,15 @@ public class MancalaBoard implements Runnable, ActionListener
                 rightTill.setText("Player 1: " + player1Till);
                 leftTill.setText("Player 2: " + player2Till);
             }
+        }
+        player1Playing = !player1Playing;
+        if(player1Playing)
+        {
+            playerTurn.setText("Player 1 Playing");
+        }
+        else
+        {
+            playerTurn.setText("Player 2 Playing");
         }
         gameEnded1 = true;
         int m = 6;
@@ -301,18 +227,52 @@ public class MancalaBoard implements Runnable, ActionListener
             }
             m++;
         }
-        
+
         if(gameEnded1)
         {
             JOptionPane message = new JOptionPane();
-            message.showMessageDialog(gamePanel, "Player 1 Wins!");
-            
+            if (player1Till >= player2Till)
+            {
+                message.showMessageDialog(gamePanel, "Player 1 Wins!");
+            }
+            else
+            {
+                message.showMessageDialog(gamePanel, "Player 2 Wins!");
+            }
+
         }
         else if(gameEnded2)
         {
             JOptionPane message = new JOptionPane();
-            message.showMessageDialog(gamePanel, "Player 2 Wins!");
-            
+            if (player1Till > player2Till)
+            {
+                message.showMessageDialog(gamePanel, "Player 1 Wins!");
+            }
+            else
+            {
+                message.showMessageDialog(gamePanel, "Player 2 Wins!");
+            }
+
+        }
+    }
+
+    public void player1Side()
+    {
+        while(marbleNum != 0 && buttonIndex <= 11)
+        {
+            buttonValues[buttonIndex] ++;
+            marbleNum--;
+            buttonIndex ++;
+        }
+    }
+
+    public void player2Side()
+    {
+        while(marbleNum != 0 && buttonIndex >= 0)
+        {
+            buttonValues[buttonIndex] ++;
+            marbleNum--;
+            buttonIndex --;
         }
     }
 
