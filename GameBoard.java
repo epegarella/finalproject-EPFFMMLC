@@ -47,8 +47,7 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
 
         rand = new Random();
 
-        Point snakeHead = randomPoint();
-        mrSnake = new Snake(snakeHead); 
+        mrSnake = null; 
 
         panel = new JPanel(new BorderLayout());
 
@@ -59,24 +58,27 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
             {
                 setBackground(Color.BLACK);
 
-                if(!mrSnake.isDead())
+                if(mrSnake != null)
                 {
-                    mrSnake.paint(g);
-                    if(fruit != null)
+                    if(!mrSnake.isDead())
                     {
-                        if(fruit.getIsEaten())
+                        mrSnake.paint(g);
+                        if(fruit != null)
                         {
-                            fruitLocation = randomPoint();
+                            if(fruit.getIsEaten())
+                            {
+                                fruitLocation = randomPoint();
+                                fruit = fruit.CreateFruit(false, fruitLocation, g);
+                            }
+                            else 
+                            {
+                                fruit.paint(g);
+                            }
+                        }
+                        else
+                        {
                             fruit = fruit.CreateFruit(false, fruitLocation, g);
                         }
-                        else 
-                        {
-                            fruit.paint(g);
-                        }
-                    }
-                    else
-                    {
-                        fruit = fruit.CreateFruit(false, fruitLocation, g);
                     }
                 }
             }
@@ -119,7 +121,7 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
 
         frame.transferFocusDownCycle();
 
-        mrSnake.start();
+        //mrSnake.start();
 
         frame.pack();
         frame.setVisible(true);
@@ -177,11 +179,10 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
         }
         else if(gameRunning)
         {
-            //startButton.setEnabled(true);
             JOptionPane deadMessage = new JOptionPane();
             deadMessage.showMessageDialog(gamePlayPanel, "YOU DIED!! Your final score is: " + score);
             gameRunning = false;
-            
+
         }
     }
 
@@ -224,6 +225,8 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
         if(startButton == e.getSource())
         {             
             score = 0;
+            mrSnake = new Snake(randomPoint()); 
+            fruit = null;
             totalScore.setText("Your score is: " + score);
             mrSnake.death(false);
 
@@ -232,8 +235,11 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
             startButton.setText("Restart");
             gameRunning = true;
 
+            mrSnake.start();
             gamePlayPanel.repaint();
-            //startButton.setVisible(false);
+            System.out.println(mrSnake.getSnakeHead());
+            System.out.println(fruitLocation);
+            
         }
 
     }
