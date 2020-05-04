@@ -50,15 +50,15 @@ public class Snake extends Thread
     {
 
         //Snake not yet alive loop
-        while(isDead)
-        {
-            try{
-                sleep(MOVE_TIME);
-            }
-            catch (InterruptedException e)
-            {
-            }
-        }
+        // while(isDead)
+        // {
+            // try{
+                // sleep(MOVE_TIME);
+            // }
+            // catch (InterruptedException e)
+            // {
+            // }
+        // }
 
         //Snake is not dead loop
         while(!isDead)
@@ -128,9 +128,9 @@ public class Snake extends Thread
      */
     public void hitting()
     {
-        while(!isDead)
+        for(int i = 1; i < snake.size(); i ++)
         {
-            for(int i = 1; i < snake.size(); i ++)
+            if(snake.get(i) != null)
             {
                 if (getSnakeHead().equals(snake.get(i)))
                 {
@@ -138,6 +138,7 @@ public class Snake extends Thread
                 }
             }
         }
+
     }
 
     /**
