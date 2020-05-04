@@ -237,8 +237,6 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
 
             mrSnake.start();
             gamePlayPanel.repaint();
-            System.out.println(mrSnake.getSnakeHead());
-            System.out.println(fruitLocation);
             
         }
 
