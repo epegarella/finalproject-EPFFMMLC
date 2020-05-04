@@ -31,7 +31,7 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
     private Fruit fruit;
     private Point fruitLocation;
     private Snake mrSnake;
-    private boolean gameStartedAlready;
+    private boolean gameRunning;
 
     /**
      * Creates the game board for the snake game and adds information
@@ -51,6 +51,8 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
         mrSnake = new Snake(snakeHead); 
 
         panel = new JPanel(new BorderLayout());
+
+        gameRunning = false;
 
         gamePlayPanel = new JPanel(){
             public void paintComponent(Graphics g)
@@ -76,14 +78,6 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
                     {
                         fruit = fruit.CreateFruit(false, fruitLocation, g);
                     }
-                }
-                else
-                {
-                    JLabel deadMessage = new JLabel("YOU DIED!! Your final score is: " + score);
-                    Font deadMessageFont = new Font("Serif", Font.BOLD, 30);
-                    deadMessage.setForeground(Color.WHITE);
-                    deadMessage.setFont(deadMessageFont);
-                    gamePlayPanel.add(deadMessage);
                 }
             }
         };
@@ -126,6 +120,7 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
         frame.transferFocusDownCycle();
 
         mrSnake.start();
+
         frame.pack();
         frame.setVisible(true);
         new Thread(){
@@ -139,12 +134,16 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
                         System.out.println(e);
                     }
 
-                    gamePlay();
-                    gamePlayPanel.repaint();
+                    if(gameRunning)
+                    {
+                        gamePlay();
+                        gamePlayPanel.repaint();
+                    }
 
                 }
             }
-        }.start();
+        }.
+        start();
 
     }
 
@@ -156,6 +155,7 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
 
         if(!mrSnake.isDead())
         {
+
             if(mrSnake.getSnakeHead().x < 0  || mrSnake.getSnakeHead().x > FRAME_SIZEX - SNAKE_SIZE)
             {
                 mrSnake.death(true);
@@ -174,6 +174,14 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
                 fruit.eatFruit();
             }
             mrSnake.hitting();
+        }
+        else if(gameRunning)
+        {
+            //startButton.setEnabled(true);
+            JOptionPane deadMessage = new JOptionPane();
+            deadMessage.showMessageDialog(gamePlayPanel, "YOU DIED!! Your final score is: " + score);
+            gameRunning = false;
+            
         }
     }
 
@@ -219,11 +227,13 @@ public class GameBoard extends KeyAdapter implements Runnable, ActionListener
             totalScore.setText("Your score is: " + score);
             mrSnake.death(false);
 
-            //Cant be where a snake is maybe set it to isEaten if its where the snake is
             fruitLocation = randomPoint();
+
             startButton.setText("Restart");
-            gameStartedAlready = true;
+            gameRunning = true;
+
             gamePlayPanel.repaint();
+            //startButton.setVisible(false);
         }
 
     }
