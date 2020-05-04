@@ -18,7 +18,7 @@ public class MancalaBoard implements Runnable, ActionListener
     private static final int BUTTON_SIZE = 10;
     private static final int END_TILL_SIZE = 100;
     private static final int NUM_BUTTON = 12;
-    private static final Color BUTTON_COLOR = new Color(201,174,97);
+    private static final Color BUTTON_COLOR = new Color(252,3,244);
 
     // Instance variables
     private JPanel gamePanel;
@@ -56,7 +56,7 @@ public class MancalaBoard implements Runnable, ActionListener
         gamePanel = new JPanel(){
             public void paintComponent(Graphics g)
             {
-                setBackground(new Color(253,253,150));
+                setBackground(new Color(151,74,255));
 
             }
         };
