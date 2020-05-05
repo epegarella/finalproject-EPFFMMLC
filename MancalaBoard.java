@@ -4,14 +4,16 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 /**
- * The Mancala Board class will create the game board and start the game.
+ * The Mancala Board class will create the game board, start, and play the classic
+ * game, Mancala. The directions and implementation have been modified from the 
+ * Mancala_Instructions.pdf on GitHub in our repository. 
  *
  * @author Francesca Fealey, Elizabeth Pegarella, Lauren Carleton, Meghan Micheli
  * @version Spring 2020
  */
 public class MancalaBoard implements Runnable, ActionListener
 {
-    // Constants
+    // Defined Constants
     private static final int BOARD_WIDTH = 1100;
     private static final int BOARD_HEIGHT = 500;
     private static final int INFO_HEIGHT = 220;
@@ -20,7 +22,7 @@ public class MancalaBoard implements Runnable, ActionListener
     private static final int NUM_BUTTON = 12;
     private static final Color BUTTON_COLOR = new Color(252,3,244);
 
-    // Instance variables
+    // Instance Variables
     private JPanel gamePanel;
     private JPanel board;
     private JLabel leftTill;
@@ -104,7 +106,7 @@ public class MancalaBoard implements Runnable, ActionListener
         infoPanel.add(blank2);
         infoPanel.add(playerTurn);
 
-        //Button Set up
+        //Button Set-up for Mancala "tills"
         JPanel gameGrid = new JPanel(new GridLayout(2,6));
         gameGrid.setPreferredSize(new Dimension(BOARD_WIDTH - 2 *END_TILL_SIZE , BOARD_HEIGHT - INFO_HEIGHT));
         buttons  = new JButton[12];
@@ -139,6 +141,10 @@ public class MancalaBoard implements Runnable, ActionListener
         frame.setVisible(true);
     }
 
+    /**
+     * This method implements the game play of a two-player Mancala Board
+     * @param e the event invoking the mthod by clicking the button
+     */
     @Override
     public void actionPerformed(ActionEvent e)
     {
@@ -228,6 +234,7 @@ public class MancalaBoard implements Runnable, ActionListener
             m++;
         }
 
+        // Display which player won the game, or whose turn it is if the game is not over
         if(gameEnded1)
         {
             JOptionPane message = new JOptionPane();
@@ -256,6 +263,9 @@ public class MancalaBoard implements Runnable, ActionListener
         }
     }
 
+    /**
+     *  This method moves the marbles on the bottom (Player 1's) side of the Mancala Board
+     */
     public void player1Side()
     {
         while(marbleNum != 0 && buttonIndex <= 11)
@@ -266,6 +276,9 @@ public class MancalaBoard implements Runnable, ActionListener
         }
     }
 
+    /**
+     *  This method moves the marbles on the top (Player 2's) side of the Mancala Board
+     */
     public void player2Side()
     {
         while(marbleNum != 0 && buttonIndex >= 0)
@@ -276,7 +289,9 @@ public class MancalaBoard implements Runnable, ActionListener
         }
     }
 
-    // main method
+    /**
+     *  Main method to play the game
+     */
     public static void main(String[] args)
     {
         javax.swing.SwingUtilities.invokeLater(new MancalaBoard());
